@@ -1,40 +1,33 @@
 package com.rabbitmq.worker.config;
 
-import com.rabbitmq.worker.listener.RabbitMQMessageListener;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+
+import static com.rabbitmq.constant.GenericConstants.*;
 
 @Configuration
 public class RabbitMQConfig {
 
-    private static final String QUEUE_NAME = "TestQueue";
-
     @Bean
-    Queue queue() {
-        return new Queue(QUEUE_NAME, true);
+    Exchange exchange() {
+        return new TopicExchange(EXCHANGE_NAME);
     }
 
     @Bean
-    ConnectionFactory connectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory =
-                new CachingConnectionFactory("localhost");
-        cachingConnectionFactory.setUsername("guest");
-        cachingConnectionFactory.setPassword("guest");
-        return cachingConnectionFactory;
+    Queue genericqueue() {
+        return new Queue(GENERIC_QUEUE_NAME);
     }
 
     @Bean
-    MessageListenerContainer messageListenerContainer() {
-        SimpleMessageListenerContainer simpleMessageListenerContainer =
-                new SimpleMessageListenerContainer();
-        simpleMessageListenerContainer.setConnectionFactory(connectionFactory());
-        simpleMessageListenerContainer.setQueues(queue());
-        simpleMessageListenerContainer.setMessageListener(new RabbitMQMessageListener());
-        return simpleMessageListenerContainer;
+    Binding genericbinding() {
+        return BindingBuilder.bind(genericqueue()).to(exchange()).with(ROUTING_KEY).noargs();
     }
+
+    @Bean
+    public MappingJackson2MessageConverter consumerJackson2MessageConverter() {
+        return new MappingJackson2MessageConverter();
+    }
+
 }

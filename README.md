@@ -6,5 +6,5 @@
 Run Rabbitmq on docker:
 
 ```shell
-docker container run -p 15672:15672 rabbitmq
+docker container run -p 5672:5672 rabbitmq
 ```

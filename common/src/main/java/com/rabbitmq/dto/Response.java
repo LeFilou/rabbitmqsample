@@ -11,10 +11,10 @@ import java.io.Serializable;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class SimpleMessage implements Serializable {
+public class Response implements Serializable {
 
-    private static final long serialVersionUID = -3840715366907215595L;
+    private static final long serialVersionUID = -4102955103239338066L;
 
+    private String title;
     private String message;
-    private String description;
 }

@@ -1,0 +1,29 @@
+version: "3.3"
+services:
+  rabbit:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbit
+    restart: always
+    network_mode: "host"
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - rabbit
+      - api
+    network_mode: "host"
